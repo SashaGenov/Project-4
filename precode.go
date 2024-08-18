@@ -51,9 +51,7 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	// так как все успешно, то статус OK
 	w.WriteHeader(http.StatusOK)
-	// записываем сериализованные в JSON данные в тело ответа
 	w.Write(resp)
 }
 
@@ -128,9 +126,6 @@ func deleteTask(w http.ResponseWriter, r *http.Request) {
 func main() {
 	r := chi.NewRouter()
 
-	// здесь регистрируйте ваши обработчики
-
-	// регистрируем в роутере эндпоинт `/artists` с методом GET, для которого используется обработчик `getArtists`
 	r.Get("/tasks", getTasks)
 
 	r.Post("/tasks", postTask)
