@@ -9,7 +9,6 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-// Task ...
 type Task struct {
 	ID           string   `json:"id"`
 	Description  string   `json:"description"`
@@ -41,7 +40,6 @@ var tasks = map[string]Task{
 	},
 }
 
-// ...
 func getTasks(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := json.Marshal(tasks)
@@ -54,8 +52,6 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(resp)
 }
-
-///,,,
 
 func postTask(w http.ResponseWriter, r *http.Request) {
 	var task Task
@@ -74,11 +70,13 @@ func postTask(w http.ResponseWriter, r *http.Request) {
 
 	tasks[task.ID] = task
 
+	if _, ok := tasks[task.ID]; ok {
+		http.Error(w, "задача уже существует", http.StatusBadRequest)
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 }
-
-//....
 
 func getTask(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
@@ -97,29 +95,22 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(resp)
+	_, _ = w.Write(resp)
 }
-
-//....
 
 func deleteTask(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
-	task, ok := tasks[id]
+	_, ok := tasks[id]
 	if !ok {
 		http.Error(w, "Задача не найдена", http.StatusNoContent)
 		return
 	}
 
-	resp, err := json.Marshal(task)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+	delete(tasks, id)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(resp)
 
 }
 
