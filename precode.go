@@ -50,7 +50,7 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(resp)
+	_, _ = w.Write(resp)
 }
 
 func postTask(w http.ResponseWriter, r *http.Request) {
@@ -68,11 +68,11 @@ func postTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tasks[task.ID] = task
-
 	if _, ok := tasks[task.ID]; ok {
 		http.Error(w, "задача уже существует", http.StatusBadRequest)
 	}
+
+	tasks[task.ID] = task
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
